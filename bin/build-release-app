@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+swift build -c release
+
+BIN_DIR="$(swift build -c release --show-bin-path)"
+APP_DIR="$BIN_DIR/Poof.app"
+
+rm -rf "$APP_DIR"
+mkdir -p "$APP_DIR/Contents/MacOS" "$APP_DIR/Contents/Resources"
+
+cp "$BIN_DIR/Poof" "$APP_DIR/Contents/MacOS/Poof"
+chmod +x "$APP_DIR/Contents/MacOS/Poof"
+
+# Copy SwiftPM resource bundles so Bundle.module lookups keep working in app form.
+while IFS= read -r bundle; do
+  cp -R "$bundle" "$APP_DIR/Contents/Resources/"
+done < <(find "$BIN_DIR" -maxdepth 1 -type d -name "*.bundle" -print)
+
+cat >"$APP_DIR/Contents/Info.plist" <<'PLIST'
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "https://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleDevelopmentRegion</key>
+  <string>en</string>
+  <key>CFBundleExecutable</key>
+  <string>Poof</string>
+  <key>CFBundleIdentifier</key>
+  <string>com.brnbw.Poof</string>
+  <key>CFBundleInfoDictionaryVersion</key>
+  <string>6.0</string>
+  <key>CFBundleName</key>
+  <string>Poof</string>
+  <key>CFBundlePackageType</key>
+  <string>APPL</string>
+  <key>CFBundleShortVersionString</key>
+  <string>0.1.0</string>
+  <key>CFBundleVersion</key>
+  <string>1</string>
+  <key>LSMinimumSystemVersion</key>
+  <string>14.0</string>
+  <key>LSUIElement</key>
+  <true/>
+  <key>NSPrincipalClass</key>
+  <string>NSApplication</string>
+</dict>
+</plist>
+PLIST
+
+ICON_SRC="Sources/Poof/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-1024px.png"
+if [[ -f "$ICON_SRC" ]] && command -v sips >/dev/null && command -v iconutil >/dev/null; then
+  tmp_root="$(mktemp -d)"
+  iconset="$tmp_root/Poof.iconset"
+  mkdir -p "$iconset"
+
+  sips -z 16 16 "$ICON_SRC" --out "$iconset/icon_16x16.png" >/dev/null
+  sips -z 32 32 "$ICON_SRC" --out "$iconset/icon_16x16@2x.png" >/dev/null
+  sips -z 32 32 "$ICON_SRC" --out "$iconset/icon_32x32.png" >/dev/null
+  sips -z 64 64 "$ICON_SRC" --out "$iconset/icon_32x32@2x.png" >/dev/null
+  sips -z 128 128 "$ICON_SRC" --out "$iconset/icon_128x128.png" >/dev/null
+  sips -z 256 256 "$ICON_SRC" --out "$iconset/icon_128x128@2x.png" >/dev/null
+  sips -z 256 256 "$ICON_SRC" --out "$iconset/icon_256x256.png" >/dev/null
+  sips -z 512 512 "$ICON_SRC" --out "$iconset/icon_256x256@2x.png" >/dev/null
+  sips -z 512 512 "$ICON_SRC" --out "$iconset/icon_512x512.png" >/dev/null
+  cp "$ICON_SRC" "$iconset/icon_512x512@2x.png"
+
+  iconutil -c icns "$iconset" -o "$APP_DIR/Contents/Resources/AppIcon.icns" >/dev/null
+  /usr/libexec/PlistBuddy -c "Add :CFBundleIconFile string AppIcon" "$APP_DIR/Contents/Info.plist" >/dev/null 2>&1 \
+    || /usr/libexec/PlistBuddy -c "Set :CFBundleIconFile AppIcon" "$APP_DIR/Contents/Info.plist" >/dev/null
+
+  rm -rf "$tmp_root"
+fi
+
+# Ad-hoc sign for local launching.
+codesign --force --deep --sign - "$APP_DIR" >/dev/null 2>&1 || true
+
+echo "Built app bundle: $APP_DIR"
+open "$BIN_DIR"

@@ -4,6 +4,9 @@ set dotenv-load := true
 build:
   swift build
 
+build-release:
+  bash -lc 'set -euo pipefail; bin/build-release-app'
+
 run:
   swift run
 
