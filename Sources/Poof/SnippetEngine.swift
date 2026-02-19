@@ -11,7 +11,7 @@ final class SnippetEngine {
   private var ignoreEventsUntil = Date.distantPast
 
   private let delimiters: Set<Character> = [
-    " ", "\n", "\r", "\t"
+    " ", "\n", "\r", "\t",
   ]
 
   init(triggerMode: ExpansionTriggerMode, injector: TextInjector = TextInjector()) {

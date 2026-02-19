@@ -35,13 +35,16 @@ final class TextInjector {
 
     for chunk in text.chunked(maxCharacters: 20) {
       guard
-        let keyDown = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(kVK_Space), keyDown: true),
-        let keyUp = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(kVK_Space), keyDown: false)
+        let keyDown = CGEvent(
+          keyboardEventSource: nil, virtualKey: CGKeyCode(kVK_Space), keyDown: true),
+        let keyUp = CGEvent(
+          keyboardEventSource: nil, virtualKey: CGKeyCode(kVK_Space), keyDown: false)
       else {
         return false
       }
 
-      keyDown.keyboardSetUnicodeString(stringLength: chunk.utf16.count, unicodeString: Array(chunk.utf16))
+      keyDown.keyboardSetUnicodeString(
+        stringLength: chunk.utf16.count, unicodeString: Array(chunk.utf16))
       keyDown.post(tap: .cghidEventTap)
       keyUp.post(tap: .cghidEventTap)
       usleep(1_500)
@@ -135,8 +138,8 @@ private struct PasteboardSnapshot: Sendable {
   }
 }
 
-private extension String {
-  func chunked(maxCharacters: Int) -> [String] {
+extension String {
+  fileprivate func chunked(maxCharacters: Int) -> [String] {
     guard maxCharacters > 0 else { return [self] }
 
     var chunks: [String] = []

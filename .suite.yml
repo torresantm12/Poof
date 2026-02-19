@@ -1,0 +1,18 @@
+tasks:
+  - name: run
+    key: r
+    cmd: just run
+    persistent: true
+    autostart: true
+
+  - name: format
+    key: f
+    cmd: swift format -r -i .
+
+  - name: test
+    key: t
+    cmd: just test
+
+  - name: build-all
+    key: B
+    cmd: just build-all

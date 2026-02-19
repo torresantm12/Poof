@@ -1,5 +1,6 @@
 import Foundation
 import XCTest
+
 @testable import Poof
 
 final class SnippetConfigStoreTests: XCTestCase {
@@ -55,7 +56,9 @@ final class SnippetConfigStoreTests: XCTestCase {
     XCTAssertEqual(store.snippets.count, 1)
     XCTAssertEqual(store.snippets.first?.replacementTemplate, "second")
     XCTAssertTrue(
-      store.lastErrors.contains(where: { $0.contains("duplicate trigger ':dup' in b.toml; overriding a.toml") })
+      store.lastErrors.contains(where: {
+        $0.contains("duplicate trigger ':dup' in b.toml; overriding a.toml")
+      })
     )
   }
 
@@ -77,9 +80,11 @@ final class SnippetConfigStoreTests: XCTestCase {
     store.reload()
     XCTAssertEqual(store.snippets.first?.replacementTemplate, "first")
 
-    let refreshed = expectation(description: "watcher reloads snippets after directory is recreated")
+    let refreshed = expectation(
+      description: "watcher reloads snippets after directory is recreated")
     store.onUpdate = { snippets, _ in
-      if snippets.contains(where: { $0.trigger == ":watch" && $0.replacementTemplate == "second" }) {
+      if snippets.contains(where: { $0.trigger == ":watch" && $0.replacementTemplate == "second" })
+      {
         refreshed.fulfill()
       }
     }
@@ -89,7 +94,8 @@ final class SnippetConfigStoreTests: XCTestCase {
       store.onUpdate = nil
     }
 
-    let movedDirectory = tempDirectoryURL
+    let movedDirectory =
+      tempDirectoryURL
       .deletingLastPathComponent()
       .appendingPathComponent("\(tempDirectoryURL.lastPathComponent)-moved", isDirectory: true)
     try FileManager.default.moveItem(at: tempDirectoryURL, to: movedDirectory)
@@ -114,6 +120,7 @@ final class SnippetConfigStoreTests: XCTestCase {
     """.write(to: watchedFile, atomically: true, encoding: .utf8)
 
     await fulfillment(of: [refreshed], timeout: 3.0)
-    XCTAssertEqual(store.snippets.first(where: { $0.trigger == ":watch" })?.replacementTemplate, "second")
+    XCTAssertEqual(
+      store.snippets.first(where: { $0.trigger == ":watch" })?.replacementTemplate, "second")
   }
 }

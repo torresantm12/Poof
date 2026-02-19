@@ -56,9 +56,12 @@ final class Preferences {
   }
 
   static func defaultConfigDirectoryURL(fileManager: FileManager = .default) -> URL {
-    let libraryURL = fileManager.urls(for: .libraryDirectory, in: .userDomainMask).first
-      ?? fileManager.homeDirectoryForCurrentUser.appendingPathComponent("Library", isDirectory: true)
-    return libraryURL
+    let libraryURL =
+      fileManager.urls(for: .libraryDirectory, in: .userDomainMask).first
+      ?? fileManager.homeDirectoryForCurrentUser.appendingPathComponent(
+        "Library", isDirectory: true)
+    return
+      libraryURL
       .appendingPathComponent("Application Support", isDirectory: true)
       .appendingPathComponent("Poof", isDirectory: true)
   }

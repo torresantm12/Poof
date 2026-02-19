@@ -1,4 +1,5 @@
 import XCTest
+
 @testable import Poof
 
 final class SnippetTemplateRendererTests: XCTestCase {

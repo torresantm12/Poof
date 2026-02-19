@@ -41,7 +41,8 @@ final class SnippetConfigStore {
         withIntermediateDirectories: true
       )
 
-      let snippetsDirectory = configDirectoryURL.appendingPathComponent("snippets", isDirectory: true)
+      let snippetsDirectory = configDirectoryURL.appendingPathComponent(
+        "snippets", isDirectory: true)
       try fileManager.createDirectory(at: snippetsDirectory, withIntermediateDirectories: true)
 
       let sampleFile = snippetsDirectory.appendingPathComponent("default.toml")

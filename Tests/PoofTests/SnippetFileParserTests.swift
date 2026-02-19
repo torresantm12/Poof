@@ -1,18 +1,19 @@
 import XCTest
+
 @testable import Poof
 
 final class SnippetFileParserTests: XCTestCase {
   func testParseSnippetArrayDocument() throws {
     let toml = """
-    [[snippets]]
-    trigger = ":a"
-    replace = "A"
+      [[snippets]]
+      trigger = ":a"
+      replace = "A"
 
-    [[snippets]]
-    trigger = ":b"
-    replace = "B"
-    disabled = true
-    """
+      [[snippets]]
+      trigger = ":b"
+      replace = "B"
+      disabled = true
+      """
 
     let snippets = try SnippetFileParser.parse(toml)
 
@@ -23,10 +24,10 @@ final class SnippetFileParserTests: XCTestCase {
 
   func testParseSingleSnippetDocument() throws {
     let toml = """
-    trigger = ":solo"
-    replace = "value"
-    case_sensitive = false
-    """
+      trigger = ":solo"
+      replace = "value"
+      case_sensitive = false
+      """
 
     let snippets = try SnippetFileParser.parse(toml)
 
@@ -37,15 +38,15 @@ final class SnippetFileParserTests: XCTestCase {
 
   func testParseThrowsWhenNoValidSnippetsExist() {
     let toml = """
-    [[snippets]]
-    trigger = "   "
-    replace = "A"
+      [[snippets]]
+      trigger = "   "
+      replace = "A"
 
-    [[snippets]]
-    trigger = ":disabled"
-    replace = "B"
-    disabled = true
-    """
+      [[snippets]]
+      trigger = ":disabled"
+      replace = "B"
+      disabled = true
+      """
 
     XCTAssertThrowsError(try SnippetFileParser.parse(toml)) { error in
       XCTAssertEqual(error as? SnippetFileParserError, .noSnippetsFound)

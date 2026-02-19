@@ -55,7 +55,8 @@ enum SnippetTemplateRenderer {
     }
 
     if let cursorPosition {
-      return RenderedSnippet(text: output, cursorOffsetFromEnd: max(0, output.count - cursorPosition))
+      return RenderedSnippet(
+        text: output, cursorOffsetFromEnd: max(0, output.count - cursorPosition))
     }
 
     return RenderedSnippet(text: output, cursorOffsetFromEnd: nil)

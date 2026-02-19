@@ -27,8 +27,7 @@ final class StatusItemController: NSObject {
 
   private func setup() {
     if let button = statusItem.button {
-      if
-        let url = resourceBundle.url(forResource: "status-bar-icon", withExtension: "pdf"),
+      if let url = resourceBundle.url(forResource: "status-bar-icon", withExtension: "pdf"),
         let image = NSImage(contentsOf: url)
       {
         image.isTemplate = true
@@ -50,11 +49,15 @@ final class StatusItemController: NSObject {
     menu.addItem(.separator())
 
     menu.addItem(makeMenuItem(title: "About Poof", action: #selector(showAbout), keyEquivalent: ""))
-    menu.addItem(makeMenuItem(title: "Settings…", action: #selector(openSettings), keyEquivalent: ","))
-    menu.addItem(.separator())
-    menu.addItem(makeMenuItem(title: "Reload snippets", action: #selector(reloadSnippets), keyEquivalent: "r"))
     menu.addItem(
-      makeMenuItem(title: "Show config in Finder", action: #selector(revealConfigDirectory), keyEquivalent: ""))
+      makeMenuItem(title: "Settings…", action: #selector(openSettings), keyEquivalent: ","))
+    menu.addItem(.separator())
+    menu.addItem(
+      makeMenuItem(title: "Reload snippets", action: #selector(reloadSnippets), keyEquivalent: "r"))
+    menu.addItem(
+      makeMenuItem(
+        title: "Show config in Finder", action: #selector(revealConfigDirectory), keyEquivalent: "")
+    )
     menu.addItem(.separator())
     menu.addItem(
       NSMenuItem(
@@ -89,10 +92,10 @@ final class StatusItemController: NSObject {
   }
 
   private var resourceBundle: Bundle {
-#if SWIFT_PACKAGE
-    return Bundle.module
-#else
-    return Bundle.main
-#endif
+    #if SWIFT_PACKAGE
+      return Bundle.module
+    #else
+      return Bundle.main
+    #endif
   }
 }
