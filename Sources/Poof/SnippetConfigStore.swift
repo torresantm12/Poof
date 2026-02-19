@@ -137,13 +137,11 @@ final class SnippetConfigStore {
     let source = DispatchSource.makeFileSystemObjectSource(
       fileDescriptor: directoryWatchFD,
       eventMask: [.write, .extend, .attrib, .delete, .rename],
-      queue: DispatchQueue.global(qos: .utility)
+      queue: .main
     )
 
     source.setEventHandler { [weak self] in
-      Task { @MainActor [weak self] in
-        self?.scheduleReload()
-      }
+      self?.scheduleReload()
     }
 
     source.setCancelHandler { [fd = directoryWatchFD] in
