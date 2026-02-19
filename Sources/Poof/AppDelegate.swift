@@ -1,6 +1,4 @@
 import AppKit
-import ApplicationServices
-import CoreGraphics
 import Foundation
 
 @MainActor
@@ -16,8 +14,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     setupMainMenu()
     NSApp.setActivationPolicy(.accessory)
     configureCallbacks()
-
-    requestRequiredPermissionsIfNeeded()
 
     configStore.ensureBootstrapFilesExist()
     configStore.reload()
@@ -82,52 +78,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     if window == settingsWindowController.window {
       NSApp.setActivationPolicy(.accessory)
     }
-  }
-
-  private func requestRequiredPermissionsIfNeeded() {
-    let hasAccessibility = AXIsProcessTrusted()
-    let hasInputMonitoring = hasInputMonitoringPermission()
-    guard !(hasAccessibility && hasInputMonitoring) else { return }
-
-    let options = ["AXTrustedCheckOptionPrompt": true] as CFDictionary
-    if !hasAccessibility {
-      _ = AXIsProcessTrustedWithOptions(options)
-    }
-    if !hasInputMonitoring {
-      _ = CGRequestListenEventAccess()
-    }
-
-    let alert = NSAlert()
-    alert.messageText = "Permissions Required"
-    alert.informativeText =
-      "Poof needs both Accessibility and Input Monitoring permissions to detect typed snippets and expand them globally."
-    alert.alertStyle = .warning
-    alert.addButton(withTitle: "Open Accessibility Settings")
-    alert.addButton(withTitle: "Open Input Monitoring Settings")
-    alert.addButton(withTitle: "Later")
-
-    let response = alert.runModal()
-    switch response {
-    case .alertFirstButtonReturn:
-      openPrivacyPane("Privacy_Accessibility")
-    case .alertSecondButtonReturn:
-      openPrivacyPane("Privacy_ListenEvent")
-    default:
-      break
-    }
-  }
-
-  private func hasInputMonitoringPermission() -> Bool {
-    if #available(macOS 10.15, *) {
-      return CGPreflightListenEventAccess()
-    }
-    return true
-  }
-
-  private func openPrivacyPane(_ pane: String) {
-    guard let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?\(pane)")
-    else { return }
-    NSWorkspace.shared.open(url)
   }
 
   private func setupMainMenu() {

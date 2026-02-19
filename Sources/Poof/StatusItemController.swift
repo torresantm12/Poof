@@ -27,7 +27,10 @@ final class StatusItemController: NSObject {
 
   private func setup() {
     if let button = statusItem.button {
-      if let image = Bundle.module.image(forResource: NSImage.Name("StatusItem")) {
+      if
+        let url = resourceBundle.url(forResource: "status-bar-icon", withExtension: "pdf"),
+        let image = NSImage(contentsOf: url)
+      {
         image.isTemplate = true
         button.image = image
       } else {
@@ -83,5 +86,13 @@ final class StatusItemController: NSObject {
 
   @objc private func showAbout() {
     onShowAbout?()
+  }
+
+  private var resourceBundle: Bundle {
+#if SWIFT_PACKAGE
+    return Bundle.module
+#else
+    return Bundle.main
+#endif
   }
 }

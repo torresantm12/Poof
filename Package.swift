@@ -15,6 +15,9 @@ let package = Package(
             dependencies: [
                 "TOMLKit",
             ],
+            exclude: [
+                "Info.plist",
+            ],
             resources: [
                 .process("Resources"),
             ]

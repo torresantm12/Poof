@@ -58,6 +58,15 @@ swift build
 swift run
 ```
 
+## Xcode project
+
+```bash
+bin/generate-xcodeproj
+open Poof.xcodeproj
+```
+
+`AppIcon` is configured on the app target, so app icon handling is managed by the asset catalog.
+
 ## Raycast import
 
 ```bash
