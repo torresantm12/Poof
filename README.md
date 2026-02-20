@@ -54,6 +54,24 @@ $ suite
 just import-raycast "/path/to/Snippets.json"
 ```
 
+## Releases
+
+Local commands:
+
+```bash
+just notary-setup
+just release 0.1.1
+just distribute 0.1.1
+```
+
+`just distribute` does all release steps:
+
+- builds + signs + notarizes `Poof.app`
+- uploads the zip to a GitHub Release
+- prepends `CHANGELOG.md`
+- updates Sparkle `appcast.xml`
+- updates the `poof` Homebrew cask in `../homebrew-cask` or `mikker/homebrew-cask`
+
 ## License
 
 MIT

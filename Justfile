@@ -8,6 +8,15 @@ build:
 build-release:
   bash -lc 'set -euo pipefail; bin/build-release-app'
 
+release VERSION="":
+  bash -lc 'set -euo pipefail; scripts/release-package.sh "{{VERSION}}"'
+
+distribute VERSION="":
+  bash -lc 'set -euo pipefail; scripts/distribute-release.sh "{{VERSION}}"'
+
+notary-setup:
+  bash -lc 'set -euo pipefail; scripts/notarytool-setup.sh'
+
 kill:
   pkill -f "Poof.app/Contents/MacOS/Poof" || true
 

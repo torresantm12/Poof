@@ -9,6 +9,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
   private lazy var configStore = SnippetConfigStore(preferences: preferences)
   private lazy var statusItemController = StatusItemController()
   private lazy var settingsWindowController = SettingsWindowController(model: appModel)
+  private lazy var updaterController = UpdaterController()
 
   func applicationDidFinishLaunching(_ notification: Notification) {
     setupMainMenu()
@@ -31,6 +32,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
   private func configureCallbacks() {
     statusItemController.onOpenSettings = { [weak self] in
       self?.showSettingsWindow()
+    }
+    statusItemController.onCheckForUpdates = { [weak self] in
+      self?.updaterController.checkForUpdates()
     }
     statusItemController.onReloadSnippets = { [weak self] in
       self?.configStore.reload()
@@ -104,6 +108,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
       keyEquivalent: ","
     )
     settingsItem.target = self
+    let checkForUpdatesItem = NSMenuItem(
+      title: "Check for Updates…",
+      action: #selector(checkForUpdatesFromMainMenu),
+      keyEquivalent: ""
+    )
+    checkForUpdatesItem.target = self
+    appMenu.addItem(checkForUpdatesItem)
     appMenu.addItem(settingsItem)
     appMenu.addItem(.separator())
 
@@ -168,5 +179,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
   @objc private func openSettingsFromMainMenu() {
     showSettingsWindow()
+  }
+
+  @objc private func checkForUpdatesFromMainMenu() {
+    updaterController.checkForUpdates()
   }
 }

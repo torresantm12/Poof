@@ -7,6 +7,7 @@ final class StatusItemController: NSObject {
   private let configLocationItem = NSMenuItem(title: "Config: -", action: nil, keyEquivalent: "")
 
   var onOpenSettings: (() -> Void)?
+  var onCheckForUpdates: (() -> Void)?
   var onReloadSnippets: (() -> Void)?
   var onRevealConfigDirectory: (() -> Void)?
   var onShowAbout: (() -> Void)?
@@ -50,6 +51,10 @@ final class StatusItemController: NSObject {
 
     menu.addItem(makeMenuItem(title: "About Poof", action: #selector(showAbout), keyEquivalent: ""))
     menu.addItem(
+      makeMenuItem(
+        title: "Check for Updates…", action: #selector(checkForUpdates), keyEquivalent: "")
+    )
+    menu.addItem(
       makeMenuItem(title: "Settings…", action: #selector(openSettings), keyEquivalent: ","))
     menu.addItem(.separator())
     menu.addItem(
@@ -77,6 +82,10 @@ final class StatusItemController: NSObject {
 
   @objc private func openSettings() {
     onOpenSettings?()
+  }
+
+  @objc private func checkForUpdates() {
+    onCheckForUpdates?()
   }
 
   @objc private func reloadSnippets() {
