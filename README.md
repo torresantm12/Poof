@@ -1,4 +1,4 @@
-# Poof
+<img src="Poof.png" alt="Poof" width="256"/>
 
 Poof is a macOS text snippet expander.
 
