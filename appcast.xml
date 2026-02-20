@@ -1,9 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
-  <channel>
-    <title>Poof Changelog</title>
-    <link>https://github.com/mikker/poof</link>
-    <description>Poof updates</description>
-    <language>en</language>
-  </channel>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+    <channel>
+        <title>Poof Changelog</title>
+        <link>https://github.com/mikker/poof</link>
+        <description>Poof updates</description>
+        <language>en</language>
+        <item>
+            <title>0.1.0</title>
+            <pubDate>Fri, 20 Feb 2026 09:32:18 +0100</pubDate>
+            <sparkle:version>13</sparkle:version>
+            <sparkle:shortVersionString>0.1.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <sparkle:releaseNotesLink>https://raw.githubusercontent.com/mikker/poof/main/Poof-0.1.0-13.txt</sparkle:releaseNotesLink>
+            <enclosure url="https://github.com/mikker/poof/releases/download/v0.1.0/Poof-0.1.0-13.zip" length="2720158" type="application/octet-stream" sparkle:edSignature="oiBK+sviAQUJNGH+mxgSeBRgXth84VZABq6CFdzIsCcDa+4T7t/vCrRs8kFPyOaE76ofpzqaPojTahb1kCWUDA=="/>
+        </item>
+    </channel>
 </rss>
