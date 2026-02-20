@@ -11,6 +11,7 @@ SPARKLE_VERSION="${SPARKLE_VERSION:-2.8.1}"
 SPARKLE_ED_KEY_FILE="${SPARKLE_ED_KEY_FILE:-}"
 SPARKLE_ED_KEY="${SPARKLE_ED_KEY:-}"
 SPARKLE_KEYCHAIN_ACCOUNT="${SPARKLE_KEYCHAIN_ACCOUNT:-}"
+EDITOR_CMD="${EDITOR:-${VISUAL:-vi}}"
 GH_REPO="mikker/poof"
 SKIP_RELEASE_UPLOAD="${SKIP_RELEASE_UPLOAD:-}"
 SKIP_PUSH="${SKIP_PUSH:-}"
@@ -104,6 +105,19 @@ extract_changelog_section() {
     in_section && /^## / { exit }
     in_section
   ' "$CHANGELOG_FILE"
+}
+
+edit_changelog() {
+  local file="$1"
+  local editor_base="${EDITOR_CMD%% *}"
+
+  if ! command -v "$editor_base" >/dev/null 2>&1; then
+    echo "Editor not found: $EDITOR_CMD" >&2
+    return 1
+  fi
+
+  IFS=" " read -r -a editor_args <<< "$EDITOR_CMD"
+  "${editor_args[@]}" "$file"
 }
 
 generate_notes() {
@@ -255,6 +269,12 @@ ensure_changelog_file
 if ! rg -Fq "$CHANGELOG_HEADING" "$CHANGELOG_FILE"; then
   prepend_changelog_entry "$CHANGELOG_HEADING" "$NOTES"
 fi
+
+echo "Opening changelog for review: $CHANGELOG_FILE"
+if ! edit_changelog "$CHANGELOG_FILE"; then
+  echo "WARNING: failed to launch editor; proceeding with generated notes."
+fi
+
 RELEASE_NOTES="$(extract_changelog_section "$CHANGELOG_HEADING")"
 if [[ -z "${RELEASE_NOTES//[$' \t\r\n']/}" ]]; then
   RELEASE_NOTES="- Maintenance release"
