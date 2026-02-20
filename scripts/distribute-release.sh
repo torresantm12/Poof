@@ -7,6 +7,7 @@ CHANGELOG_FILE="${CHANGELOG_FILE:-$ROOT/CHANGELOG.md}"
 APPCAST_FILE="${APPCAST_FILE:-$ROOT/appcast.xml}"
 MAX_NOTES="${MAX_NOTES:-15}"
 SPARKLE_GENERATE_APPCAST="${SPARKLE_GENERATE_APPCAST:-}"
+SPARKLE_VERSION="${SPARKLE_VERSION:-2.8.1}"
 SPARKLE_ED_KEY_FILE="${SPARKLE_ED_KEY_FILE:-}"
 SPARKLE_ED_KEY="${SPARKLE_ED_KEY:-}"
 SPARKLE_KEYCHAIN_ACCOUNT="${SPARKLE_KEYCHAIN_ACCOUNT:-}"
@@ -43,6 +44,7 @@ detect_generate_appcast() {
     "/opt/homebrew/bin/generate_appcast"
     "/usr/local/bin/generate_appcast"
     "/Applications/Sparkle.app/Contents/MacOS/generate_appcast"
+    "$ROOT/.build/sparkle-tools/${SPARKLE_VERSION}/bin/generate_appcast"
   )
 
   local candidate
@@ -53,7 +55,27 @@ detect_generate_appcast() {
     fi
   done
 
-  die "generate_appcast not found. Set SPARKLE_GENERATE_APPCAST."
+  require_cmd curl
+  require_cmd tar
+
+  local tools_root="$ROOT/.build/sparkle-tools/${SPARKLE_VERSION}"
+  local archive_path="$ROOT/.build/sparkle-tools/Sparkle-${SPARKLE_VERSION}.tar.xz"
+  local download_url="https://github.com/sparkle-project/Sparkle/releases/download/${SPARKLE_VERSION}/Sparkle-${SPARKLE_VERSION}.tar.xz"
+  local tool_path="$tools_root/bin/generate_appcast"
+
+  mkdir -p "$ROOT/.build/sparkle-tools"
+  echo "Downloading Sparkle tools ${SPARKLE_VERSION}..."
+  curl -fsSL -o "$archive_path" "$download_url"
+
+  rm -rf "$tools_root"
+  mkdir -p "$tools_root"
+  tar -xf "$archive_path" -C "$tools_root"
+
+  if [[ ! -x "$tool_path" ]]; then
+    die "Failed to prepare generate_appcast at $tool_path"
+  fi
+
+  echo "$tool_path"
 }
 
 ensure_changelog_file() {
@@ -242,6 +264,9 @@ SPARKLE_GENERATE_APPCAST="$(detect_generate_appcast)"
 APPCAST_TMPDIR="$(mktemp -d)"
 trap 'rm -rf "$APPCAST_TMPDIR"' EXIT
 cp "$ZIP" "$APPCAST_TMPDIR/"
+if [[ -f "$APPCAST_FILE" ]]; then
+  cp "$APPCAST_FILE" "$APPCAST_TMPDIR/appcast.xml"
+fi
 BASE_NAME="$(basename "$ZIP")"
 NOTES_FILE="$APPCAST_TMPDIR/${BASE_NAME%.*}.txt"
 printf "%s\n" "$RELEASE_NOTES" > "$NOTES_FILE"
@@ -249,26 +274,33 @@ printf "%s\n" "$RELEASE_NOTES" > "$NOTES_FILE"
 DOWNLOAD_PREFIX="https://github.com/${GH_REPO}/releases/download/${TAG}/"
 
 run_appcast() {
-  local -a cmd=(
-    "$SPARKLE_GENERATE_APPCAST"
-    --download-url-prefix "$DOWNLOAD_PREFIX"
-    -o appcast.xml
+  (
+    cd "$APPCAST_TMPDIR"
+
+    local -a cmd=(
+      "$SPARKLE_GENERATE_APPCAST"
+      --download-url-prefix "$DOWNLOAD_PREFIX"
+      -o appcast.xml
+    )
+
+    if [[ -n "$SPARKLE_KEYCHAIN_ACCOUNT" ]]; then
+      cmd+=(--account "$SPARKLE_KEYCHAIN_ACCOUNT")
+    fi
+
+    if [[ -n "$SPARKLE_ED_KEY" ]]; then
+      printf "%s\n" "$SPARKLE_ED_KEY" | "${cmd[@]}" --ed-key-file - .
+    elif [[ -n "$SPARKLE_ED_KEY_FILE" ]]; then
+      "${cmd[@]}" --ed-key-file "$SPARKLE_ED_KEY_FILE" .
+    else
+      "${cmd[@]}" .
+    fi
   )
-
-  if [[ -n "$SPARKLE_KEYCHAIN_ACCOUNT" ]]; then
-    cmd+=(--account "$SPARKLE_KEYCHAIN_ACCOUNT")
-  fi
-
-  if [[ -n "$SPARKLE_ED_KEY" ]]; then
-    printf "%s\n" "$SPARKLE_ED_KEY" | "${cmd[@]}" --ed-key-file - "$APPCAST_TMPDIR"
-  elif [[ -n "$SPARKLE_ED_KEY_FILE" ]]; then
-    "${cmd[@]}" --ed-key-file "$SPARKLE_ED_KEY_FILE" "$APPCAST_TMPDIR"
-  else
-    "${cmd[@]}" "$APPCAST_TMPDIR"
-  fi
 }
 
 run_appcast
+if [[ ! -f "$APPCAST_TMPDIR/appcast.xml" ]]; then
+  die "generate_appcast did not produce appcast.xml"
+fi
 cp "$APPCAST_TMPDIR/appcast.xml" "$APPCAST_FILE"
 
 PBXPROJ="$ROOT/Poof.xcodeproj/project.pbxproj"
